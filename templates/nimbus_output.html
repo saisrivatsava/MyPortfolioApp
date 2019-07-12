@@ -1,0 +1,65 @@
+{% extends "baseTemplate.html"%}
+
+{% block content %}
+
+<br><br>
+<br><br>
+<h3 class="text-center">Nimbus Report - {{pname}}</h3>
+<br>
+
+<div class="row justify-content-center align-items-center">
+  <div class="col-md-6">
+    <table class="table table-bordered">
+      <thead>
+        <tr>
+          <th scope="col">Total Record Count</th>
+          <th scope="col">Training Set Record Count</th>
+          <th scope="col">Test Set Record Count</th>
+          <!-- <th scope="col">Handle</th> -->
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <th scope="row">{{runDetails[0]}}</th>
+          <td>{{runDetails[1]}}</td>
+          <td>{{runDetails[2]}}</td>
+          <!-- <td>@mdo</td> -->
+        </tr>
+      </tbody>
+    </table>
+  </div>
+</div>
+<br>
+<div class="row justify-content-center align-items-center">
+  <div class="col-md-8">
+    <!-- <div class="row justify-content-md-center"> -->
+    <table class="table table-striped">
+      <thead>
+        <tr>
+          <th scope=" col">#</th>
+          <th scope="col"><b>Model</b></th>
+          <th scope="col"><b>Model Args</b></th>
+          <th scope="col"><b>Accuracy</b></th>
+          <!-- <th scope="col">Handle</th> -->
+        </tr>
+      </thead>
+      <tbody>
+        {% for row in result %}
+        <tr>
+          <td><b>{{ row.split("|")[0] }}</b></td>
+          <td>{{ row.split("|")[1] }}</td>
+          <td>{{ row.split("|")[2] }}</td>
+          <td>{{ row.split("|")[3] }}</td>
+        </tr>
+        {% endfor %}
+
+      </tbody>
+    </table>
+  </div>
+</div>
+<!-- </div>
+  </div> -->
+<br><br>
+
+
+{%endblock%}

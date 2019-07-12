@@ -1,0 +1,74 @@
+{% extends "baseTemplate.html"%}
+
+{% block content %}
+
+<br>
+<br>
+<br>
+<br>
+<h2 class="text-center">Nimbus AI</h2>
+<div class="card card-1  text-md-center" id="card1">
+
+  <div class="card-body">
+    <div class="container-fluid">
+      <div class="row justify-content-md-center">
+
+        <form action="/load_nimbus" method="POST" role="form" enctype="multipart/form-data">
+          <div class="form-row">
+            <div class="form-group col-md-3">
+              <input type="text" class="form-control" name="name" placeholder="Your Name">
+            </div>
+            <div class="form-group col-md-3">
+              <input type="text" class="form-control" name="project_name" placeholder="Project Name">
+            </div>
+            <div class="form-group col-md-6">
+              <input type="email" class="form-control" name="email" placeholder="Email Address">
+            </div>
+          </div>
+
+          <div class="form-row">
+            <div class="form-group col-md-6">
+              <div class="custom-file">
+                <input type="file" class="custom-file-input" name="file">
+                <label class="custom-file-label" for="inputGroupFile01">Choose file</label>
+              </div>
+            </div>
+            <!-- <div class="form-group col-md-6">
+              <label for="validationCustom05">Choose Training Data File</label>
+              <input type="file" class="custom-file-input" name="data_file">
+              <label class="custom-file-label" for="customFile">Choose Training Data File</label>
+            </div> -->
+            <div class="form-group col-md-3">
+              <input type="text" class="form-control" name="target_feature" placeholder="Target Feature Name">
+            </div>
+            <div class="form-group col-md-3">
+              <select name="inputState" class="form-control">
+                <option selected>Classification</option>
+                <option>Regression</option>
+              </select>
+            </div>
+          </div>
+          <center>
+            <button type="submit" class="btn btn-success">Submit</button>
+          </center>
+          <!-- <a class="btn btn-lg btn-block btn-primary" href="/nimbus" role="button">Run Nimbus</a> -->
+          <!-- <button type="submit" class="btn btn-primary">Sign in</button> -->
+        </form>
+      </div>
+    </div>
+  </div>
+</div>
+<br>
+<br>
+<br>
+
+
+
+
+
+
+
+
+
+
+{%endblock%}

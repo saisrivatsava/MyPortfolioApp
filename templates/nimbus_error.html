@@ -1,0 +1,26 @@
+{% extends "baseTemplate.html"%}
+
+{% block content %}
+
+<br><br>
+<br><br>
+
+<h3 class="text-center">Nimbus Report - {{pname}}</h3>
+<br>
+
+<div class="row justify-content-center align-items-center">
+  <div class="col-md-6">
+
+    <div class="alert alert-danger" role="alert">
+      Given Target Feature "<b>{{ target_feature }}</b>" is not Present in Input Features!!!!
+    </div>
+  </div>
+</div>
+
+
+
+<br>
+<br>
+
+
+{%endblock%}
