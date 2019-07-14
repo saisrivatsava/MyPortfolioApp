@@ -2,6 +2,14 @@
 
 {% block content %}
 
+<script type="text/javascript">
+  function yesnoCheck() {
+    if (document.getElementById('outputDataFlag').checked) {
+      document.getElementById('testDataFields').style.display = 'block';
+    } else document.getElementById('testDataFields').style.display = 'none';
+  }
+</script>
+
 <br>
 <br>
 <br>
@@ -48,8 +56,50 @@
               </select>
             </div>
           </div>
+          <div class="form-row">
+            <div class="form-check">
+              <input class="form-check-input" type="radio" name="outputDataFlag" id="outputDataFlag" value="yes" onclick="javascript:yesnoCheck();">
+              <label class=" form-check-label" for="exampleRadios1">
+                Have test data set??
+              </label>
+            </div>
+          </div>
+
+          <!-- <div class="form-row" id="testDataFields" style="display:none">
+            <div class="form-group col-md-6">
+              <div class="custom-file">
+                <input type="file" class="custom-file-input" name="test_file">
+                <label class="custom-file-label" for="inputGroupFile01">Choose test data file</label>
+              </div>
+            </div>
+
+            <div class="form-group col-md-6">
+              <input type="text" class="form-control" name="output_cols" placeholder="Features to include in Output file (, seperated)">
+            </div>
+          </div> -->
+          <div id="testDataFields" style="display:none">
+            <div class="form-row">
+              <div class="form-group col-md-6">
+                <div class="custom-file">
+                  <input type="file" class="custom-file-input" name="test_file" id="test_input_file">
+                  <label class="custom-file-label" for="inputGroupFile02">Choose test data file</label>
+                </div>
+              </div>
+              <div class="form-group col-md-6">
+                <input type="text" class="form-control" name="target_features_to_include" placeholder="Features to include in Output file (, seperated)">
+              </div>
+              <!-- <div class="form-group col-md-3">
+              <select name="inputState" class="form-control">
+                <option selected>Classification</option>
+                <option>Regression</option>
+              </select>
+            </div> -->
+            </div>
+          </div>
+
+
           <center>
-            <button type="submit" class="btn btn-success">Submit</button>
+            <button type="submit" class="btn btn-success">Run Nimbus</button>
           </center>
           <!-- <a class="btn btn-lg btn-block btn-primary" href="/nimbus" role="button">Run Nimbus</a> -->
           <!-- <button type="submit" class="btn btn-primary">Sign in</button> -->
@@ -63,7 +113,14 @@
 <br>
 
 
-
+<!-- <script>
+  $('.test_input_file').on('change', function() {
+    //get the file name
+    var fileName = $(this).val();
+    //replace the "Choose a file" label
+    $(this).next('.custom-file-label').html(fileName);
+  })
+</script> -->
 
 
 

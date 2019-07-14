@@ -44,12 +44,12 @@
         </tr>
       </thead>
       <tbody>
-        {% for row in result %}
+        {%  for name, score in sorted_scores_map.items() %}
         <tr>
-          <td><b>{{ row.split("|")[0] }}</b></td>
-          <td>{{ row.split("|")[1] }}</td>
-          <td>{{ row.split("|")[2] }}</td>
-          <td>{{ row.split("|")[3] }}</td>
+          <td><b>{{ "1" }}</b></td>
+          <td>{{ name }}</td>
+          <td>{{ todo }}</td>
+          <td>{{ score }}</td>
         </tr>
         {% endfor %}
 
@@ -57,10 +57,16 @@
     </table>
   </div>
 </div>
-<div class="row justify-content-center align-items-center">
-  <div class="col-md-6">
+<!-- <div class="row "> -->
+<div class="form-row">
+  <div class="form-group col-md-6">
+    <a class="btn btn-success" href="/downloadPredicted" role="button">Download Predicted File</a>
+    <!-- </div> -->
+  </div>
+  <div class="form-group col-md-6">
+    <!-- <div class="col-md-6"> -->
 
-    <a class="btn btn-lg btn-block btn-primary" href="/nimbus" role="button">Go back to Nimbus</a>
+    <a class="btn btn-primary" href="/nimbus" role="button">Go back to Nimbus</a>
   </div>
 </div>
 <br><br>
