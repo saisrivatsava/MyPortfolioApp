@@ -57,10 +57,21 @@
     </table>
   </div>
 </div>
-<div class="row justify-content-center align-items-center">
-  <div class="col-md-6">
 
-    <a class="btn btn-lg btn-block btn-primary" href="/nimbus" role="button">Go back to Nimbus</a>
+<div class="row justify-content-center align-items-center">
+  <div class="col-md-8">
+    <div class="alert alert-success" role="alert">
+      Highest Score Model : {{highestScoredModelName}}, with Cross Val Score Mean : {{cross_val_score_mean}} is used for Prediction.
+    </div>
+  </div>
+</div>
+
+<div class="justify-content-center align-items-center">
+  <div class="form-group col-md-6">
+    <a class="btn btn-success" href="{{ url_for('download_csv', filename=generatedFileName) }}" role="button">Download Predicted File</a>
+  </div>
+  <div class="form-group col-md-6">
+    <a class="btn btn-primary" href="/nimbus" role="button">Go back to Nimbus</a>
   </div>
 </div>
 <br><br>
