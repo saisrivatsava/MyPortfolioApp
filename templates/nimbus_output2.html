@@ -38,7 +38,7 @@
         <tr>
           <th scope=" col">#</th>
           <th scope="col"><b>Model</b></th>
-          <th scope="col"><b>Model Args</b></th>
+          <!-- <th scope="col"><b>Model Args</b></th> -->
           <th scope="col"><b>Accuracy</b></th>
           <!-- <th scope="col">Handle</th> -->
         </tr>
@@ -48,7 +48,7 @@
         <tr>
           <td><b>{{ "1" }}</b></td>
           <td>{{ name }}</td>
-          <td>{{ todo }}</td>
+          <!-- <td>{{ todo }}</td> -->
           <td>{{ score }}</td>
         </tr>
         {% endfor %}
@@ -57,15 +57,20 @@
     </table>
   </div>
 </div>
-<!-- <div class="row "> -->
-<div class="form-row">
+
+<div class="row justify-content-center align-items-center">
+  <div class="col-md-8">
+    <div class="alert alert-success" role="alert">
+      Highest Score Model : {{highestScoredModelName}}, with Cross Val Score Mean : {{cross_val_score_mean}} is used for Prediction.
+    </div>
+  </div>
+</div>
+
+<div class="justify-content-center align-items-center">
   <div class="form-group col-md-6">
-    <a class="btn btn-success" href="/downloadPredicted" role="button">Download Predicted File</a>
-    <!-- </div> -->
+    <a class="btn btn-success" href="{{ url_for('download_csv', filename=generatedFileName) }}" role="button">Download Predicted File</a>
   </div>
   <div class="form-group col-md-6">
-    <!-- <div class="col-md-6"> -->
-
     <a class="btn btn-primary" href="/nimbus" role="button">Go back to Nimbus</a>
   </div>
 </div>

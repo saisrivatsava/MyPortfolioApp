@@ -10,6 +10,14 @@
   }
 </script>
 
+<script type="text/javascript">
+  function featuresToExclude() {
+    if (document.getElementById('haveFeaturesToExclude').checked) {
+      document.getElementById('featuresToExcludeDiv').style.display = 'block';
+    } else document.getElementById('featuresToExcludeDiv').style.display = 'none';
+  }
+</script>
+
 <br>
 <br>
 <br>
@@ -41,11 +49,6 @@
                 <label class="custom-file-label" for="inputGroupFile01">Choose file</label>
               </div>
             </div>
-            <!-- <div class="form-group col-md-6">
-              <label for="validationCustom05">Choose Training Data File</label>
-              <input type="file" class="custom-file-input" name="data_file">
-              <label class="custom-file-label" for="customFile">Choose Training Data File</label>
-            </div> -->
             <div class="form-group col-md-3">
               <input type="text" class="form-control" name="target_feature" placeholder="Target Feature Name">
             </div>
@@ -58,25 +61,36 @@
           </div>
           <div class="form-row">
             <div class="form-check">
-              <input class="form-check-input" type="radio" name="outputDataFlag" id="outputDataFlag" value="yes" onclick="javascript:yesnoCheck();">
+              <input class="form-check-input" type="checkbox" name="isHavingIndexCol" id="isHavingIndexCol" value="yes">
               <label class=" form-check-label" for="exampleRadios1">
-                Have test data set??
+                Is the first Column Index ??
+              </label>
+            </div>
+          </div>
+          <div class="form-row">
+            <div class="form-check">
+              <input class="form-check-input" type="checkbox" name="haveFeaturesToExclude" id="haveFeaturesToExclude" value="yes" onclick="javascript:featuresToExclude();"">
+              <label class=" form-check-label" for="exampleRadios2">
+              Have any features to Exclude ??
+              </label>
+            </div>
+          </div>
+          <div id="featuresToExcludeDiv" style="display:none">
+            <div class="form-row">
+              <div class="form-group col-md-6">
+                <input type="text" class="form-control" name="features_to_exclude_list" placeholder="Features to Exclude in Output file as , seperated">
+              </div>
+            </div>
+          </div>
+          <div class="form-row">
+            <div class="form-check">
+              <input class="form-check-input" type="checkbox" name="outputDataFlag" id="outputDataFlag" value="yes" onclick="javascript:yesnoCheck();">
+              <label class=" form-check-label" for="exampleRadios1">
+                Have test dataset ??
               </label>
             </div>
           </div>
 
-          <!-- <div class="form-row" id="testDataFields" style="display:none">
-            <div class="form-group col-md-6">
-              <div class="custom-file">
-                <input type="file" class="custom-file-input" name="test_file">
-                <label class="custom-file-label" for="inputGroupFile01">Choose test data file</label>
-              </div>
-            </div>
-
-            <div class="form-group col-md-6">
-              <input type="text" class="form-control" name="output_cols" placeholder="Features to include in Output file (, seperated)">
-            </div>
-          </div> -->
           <div id="testDataFields" style="display:none">
             <div class="form-row">
               <div class="form-group col-md-6">
@@ -86,16 +100,12 @@
                 </div>
               </div>
               <div class="form-group col-md-6">
-                <input type="text" class="form-control" name="target_features_to_include" placeholder="Features to include in Output file (, seperated)">
+                <input type="text" class="form-control" name="target_features_to_include" placeholder="Features to include in Output file as , seperated">
               </div>
-              <!-- <div class="form-group col-md-3">
-              <select name="inputState" class="form-control">
-                <option selected>Classification</option>
-                <option>Regression</option>
-              </select>
-            </div> -->
             </div>
           </div>
+
+
 
 
           <center>

@@ -1,6 +1,7 @@
 import numpy as np
 import pandas as pd
 from sklearn.model_selection import train_test_split
+from sklearn.model_selection import cross_val_score
 from sklearn.pipeline import Pipeline
 from sklearn.impute import SimpleImputer
 from sklearn.preprocessing import StandardScaler, OneHotEncoder
@@ -12,7 +13,13 @@ from sklearn.tree import DecisionTreeClassifier
 from sklearn.ensemble import RandomForestClassifier, AdaBoostClassifier, GradientBoostingClassifier
 from sklearn.discriminant_analysis import LinearDiscriminantAnalysis
 from sklearn.discriminant_analysis import QuadraticDiscriminantAnalysis
+from sklearn.ensemble.bagging import BaggingClassifier
+from sklearn.linear_model.stochastic_gradient import SGDClassifier
+from sklearn.linear_model.ridge import RidgeClassifier
+
+
 import collections
+
 
 class Classifier:
     X_train = ""
@@ -23,23 +30,17 @@ class Classifier:
     X_raw=""
     y_raw=""
 
-    classifiers = [
-    KNeighborsClassifier(3),
-    SVC(kernel="rbf", C=0.025, probability=True),
-    # NuSVC(probability=True),
-    DecisionTreeClassifier(),
-    RandomForestClassifier(),
-    AdaBoostClassifier(),
-    GradientBoostingClassifier()
-    ]
-
     classifiersMap = {
     "KNeighborsClassifier":  KNeighborsClassifier(3),
     "SVC":    SVC(kernel="rbf", C=0.025, probability=True),
     "DecisionTreeClassifier":    DecisionTreeClassifier(),
     "RandomForestClassifier":    RandomForestClassifier(),
-    "RandomForestClassifier":    AdaBoostClassifier(),
-    "GradientBoostingClassifier":    GradientBoostingClassifier()}
+    "AdaBoostClassifier":    AdaBoostClassifier(),
+    "GradientBoostingClassifier":    GradientBoostingClassifier(),
+    "BaggingClassifier":    BaggingClassifier(),
+    "SGDClassifier":    SGDClassifier(),
+    "RidgeClassifier":  RidgeClassifier()
+    }
 
     scoresMap={}
     argsMap={}
@@ -48,14 +49,12 @@ class Classifier:
         self.loadAndSplitData(data, target)
         featuresList = self.getNumericAndCatFeatures(target)
         preprocessor = self.createPreprocessTransformer(featuresList)
-        res  = self.fitModels(preprocessor)
+        sorted_scores_map  = self.fitModelsMap(preprocessor)
         runDetails = self.getRunDetails()
-        return (runDetails,res)
+        return (runDetails,sorted_scores_map)
 
-    def trainWithTestData(self, train_data, test_data, target, col_names, runName):
-        self.loadAndSplitData(train_data, target)
-        # print("X_train "+str(len(self.X_train)))
-        # print("X_test "+str(len(self.X_test)))
+    def trainWithTestData(self, train_data, test_data, target, col_names, run_name, features_to_exclude_list):
+        self.loadAndSplitData(train_data, target,features_to_exclude_list)
         featuresList = self.getNumericAndCatFeatures(target)
         preprocessor = self.createPreprocessTransformer(featuresList)
         sorted_scores_map  = self.fitModelsMap(preprocessor)
@@ -66,29 +65,35 @@ class Classifier:
             models_args_list.append(self.argsMap[modelName])
 
         highest_scored_model = self.getHighestScoreModel(sorted_scores_map)
-        predicted_target = self.predictTarget(test_data,preprocessor, highest_scored_model)
+        highest_scored_model_name = list(sorted_scores_map.keys())[0]
+        cross_val_score_mean = self.getCrossValScore(preprocessor,highest_scored_model)
+
+        predicted_target_series = self.predictTarget(test_data,preprocessor, highest_scored_model)
 
         default_cols_Df= test_data[col_names.split(",")]
-        predicted_Df = pd.DataFrame({target : predicted_target})
+        predicted_Df = pd.DataFrame({target : predicted_target_series})
         outputDf = pd.concat([default_cols_Df, predicted_Df], axis=1)
-        output_f_name=self.savePredictedFile(outputDf, runName)
-        return (runDetails,sorted_scores_map, models_args_list, output_f_name)
-
+        output_f_name=self.savePredictedFile(outputDf, run_name)
+        return (runDetails,sorted_scores_map, models_args_list, output_f_name, cross_val_score_mean, highest_scored_model_name)
 
     def savePredictedFile(self, outputDf, runName):
-        output_file_name = "OutputFiles/"+runName+"Prediction.csv"
-        outputDf.to_csv(output_file_name, index = False)
+        output_folder = "outputFiles/"
+        output_file_name = runName+"Prediction.csv"
+        outputDf.to_csv(output_folder+output_file_name, index = False)
         # filename = secure_filename(file.filename)
         return output_file_name
 
-
+    def getCrossValScore(self,preprocessor,model):
+        pipe = Pipeline(steps=[('preprocessor', preprocessor),('classifier', model)])
+        cv_scores = cross_val_score(pipe, self.X_raw, self.y_raw, cv=10)
+        mean_cv_score = sum(cv_scores)/len(cv_scores)
+        return mean_cv_score
 
     def predictTarget(self, test_data,preprocessor, highest_scored_model):
-        pipe2 = Pipeline(steps=[('preprocessor', preprocessor),('classifier', highest_scored_model)])
-        model = highest_scored_model
-        pipe2.fit(self.X_raw, self.y_raw)
+        pipe = Pipeline(steps=[('preprocessor', preprocessor),('classifier', highest_scored_model)])
+        pipe.fit(self.X_raw, self.y_raw)
 
-        predictions = pipe2.predict(test_data)
+        predictions = pipe.predict(test_data)
         return predictions
 
 
@@ -106,8 +111,8 @@ class Classifier:
         return model
 
 
-    def loadAndSplitData(self, data, target):
-        self.raw_data = data
+    def loadAndSplitData(self, data, target,features_to_exclude_list ):
+        self.raw_data = data.drop(features_to_exclude_list.split(","), axis=1)
         X = self.raw_data.drop(target, axis=1)
         y = self.raw_data[target]
         self.X_raw = X
@@ -159,8 +164,6 @@ class Classifier:
         scoresMap = {}
 
         for name, cmodel in self.classifiersMap.items():
-            # print(name)
-            # print(model)
             pipe = Pipeline(steps=[('preprocessor', preprocessor),('classifier', cmodel)])
             pipe.fit(self.X_train, self.y_train)
             # classifierName = type(classifier).__name__
@@ -172,15 +175,6 @@ class Classifier:
         sorted_scores = sorted(scoresMap.items(), key=lambda kv: kv[1], reverse=True)
         sorted_scores_map = collections.OrderedDict(sorted_scores)
         return sorted_scores_map
-            # # print(str(classifierArgs))
-            # resStr = str(i)+"|"
-            # i+=1
-            # resStr+=classifierName+"|"
-            # resStr+=classifierArgs+"|"
-            # resStr+=str(pipe.score(self.X_test, self.y_test))
-            # result.append(resStr)
-            # # print(classifier)
-            # print("model score: %.3f" % pipe.score(self.X_test, self.y_test))
-        # return result
+
     def __del__(self):
         print("Cleared Object")

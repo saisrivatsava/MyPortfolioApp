@@ -38,18 +38,18 @@
         <tr>
           <th scope=" col">#</th>
           <th scope="col"><b>Model</b></th>
-          <th scope="col"><b>Model Args</b></th>
+          <!-- <th scope="col"><b>Model Args</b></th> -->
           <th scope="col"><b>Accuracy</b></th>
           <!-- <th scope="col">Handle</th> -->
         </tr>
       </thead>
       <tbody>
-        {% for row in result %}
+        {%  for name, score in sorted_scores_map.items() %}
         <tr>
-          <td><b>{{ row.split("|")[0] }}</b></td>
-          <td>{{ row.split("|")[1] }}</td>
-          <td>{{ row.split("|")[2] }}</td>
-          <td>{{ row.split("|")[3] }}</td>
+          <td><b>{{ "1" }}</b></td>
+          <td>{{ name }}</td>
+          <!-- <td>{{ todo }}</td> -->
+          <td>{{ score }}</td>
         </tr>
         {% endfor %}
 
