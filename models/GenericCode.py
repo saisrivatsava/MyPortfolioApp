@@ -53,5 +53,7 @@ class GenericCode:
         # filename = secure_filename(file.filename)
         return output_file_name
 
-    def testCode(self):
-        print("=================================================================")
+    def getHighestScoreModel(self, sorted_map):
+        modelsList = list(sorted_map.keys())
+        model =sorted_map[modelsList[0]]
+        return model

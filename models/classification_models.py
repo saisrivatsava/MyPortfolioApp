@@ -17,8 +17,6 @@ from sklearn.ensemble.bagging import BaggingClassifier
 from sklearn.linear_model.stochastic_gradient import SGDClassifier
 from sklearn.linear_model.ridge import RidgeClassifier
 from models import GenericCode
-
-
 import collections
 
 
