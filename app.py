@@ -55,6 +55,10 @@ def load_nimbus():
     file_url = os.path.join(app.config['UPLOAD_FOLDER'], filename)
     target_feature = request.form['target_feature']
     model_type = request.form['inputState']
+    if model_type == "Classification":
+        acc_metrics = "toDo"
+    else:
+        acc_metrics = "R Squared"
     is_having_index_col = request.form.get("isHavingIndexCol")
     have_features_to_exclude = request.form.get("haveFeaturesToExclude")
 
@@ -82,7 +86,7 @@ def load_nimbus():
             'nimbus_output.html',
             sorted_scores_map=sorted_scores_map,
             runDetails=runDetails,
-            pname=pname)
+            pname=pname,acc_metrics=acc_metrics)
 
     elif test_file_flag == "yes" and target_feature in data.columns:
         test_file = request.files['test_file']
@@ -129,7 +133,7 @@ def load_nimbus():
             pname=pname,
             cross_val_score_mean=cross_val_score_mean,
             highestScoredModelName=highestScoredModelName,
-            generatedFileName=generatedFileName)
+            generatedFileName=generatedFileName,acc_metrics=acc_metrics)
 
     else:
         os.remove(file_url)

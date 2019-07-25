@@ -3,7 +3,7 @@ from sklearn.pipeline import Pipeline
 from sklearn.impute import SimpleImputer
 from sklearn.preprocessing import StandardScaler, OneHotEncoder
 from sklearn.compose import ColumnTransformer
-
+from sklearn.utils import shuffle
 
 class GenericCode:
 
@@ -36,9 +36,11 @@ class GenericCode:
             raw_data = data.drop(features_to_exclude_list.split(","), axis=1)
         else:
             raw_data = data
+        thresh = len(raw_data) * .2
+        raw_data.dropna(thresh = thresh, axis = 1, inplace = True)
         X = raw_data.drop(target, axis=1)
         y = raw_data[target]
-
+        X , y = shuffle(X,y, random_state=0)
         X_train, X_test, y_train, y_test = train_test_split(
             X, y, test_size=0.2)
         dataDetails.append(len(raw_data))

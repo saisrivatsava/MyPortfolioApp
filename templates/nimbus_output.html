@@ -39,14 +39,14 @@
           <th scope=" col">#</th>
           <th scope="col"><b>Model</b></th>
           <!-- <th scope="col"><b>Model Args</b></th> -->
-          <th scope="col"><b>Accuracy</b></th>
+          <th scope="col"><b>Accuracy-{{acc_metrics}}</b></th>
           <!-- <th scope="col">Handle</th> -->
         </tr>
       </thead>
       <tbody>
         {%  for name, score in sorted_scores_map.items() %}
         <tr>
-          <td><b>{{ "1" }}</b></td>
+          <td><b>{{ "#" }}</b></td>
           <td>{{ name }}</td>
           <!-- <td>{{ todo }}</td> -->
           <td>{{ score }}</td>

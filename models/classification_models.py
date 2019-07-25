@@ -129,7 +129,9 @@ class Classifier:
                 steps=[
                     ('preprocessor', preprocessor), ('classifier', cmodel)])
             pipe.fit(self.X_train, self.y_train)
-            score = pipe.score(self.X_test, self.y_test)
+            # score = pipe.score(self.X_test, self.y_test)
+            score_arr = cross_val_score(pipe, self.X_raw, self.y_raw, cv=10)
+            score = score_arr.mean()
             classifierArgs = str(cmodel.get_params())
             scoresMap.update({name: score})
             self.argsMap.update({name: classifierArgs})

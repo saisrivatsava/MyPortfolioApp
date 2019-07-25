@@ -1,4 +1,4 @@
-from sklearn.linear_model import ElasticNet, Lasso, BayesianRidge, LassoLarsIC,LinearRegression
+from sklearn.linear_model import ElasticNet, Lasso, BayesianRidge, LassoLarsIC,LinearRegression,LogisticRegression
 from sklearn.tree import DecisionTreeRegressor
 from sklearn.ensemble import RandomForestRegressor, GradientBoostingRegressor
 from sklearn.kernel_ridge import KernelRidge
@@ -13,9 +13,11 @@ from sklearn.impute import SimpleImputer
 from sklearn.preprocessing import StandardScaler, OneHotEncoder
 from sklearn.compose import ColumnTransformer
 from sklearn.metrics import accuracy_score, log_loss
+from sklearn.metrics import mean_absolute_error
 import collections
 import pandas as pd
 import numpy as np
+import eli5
 
 # import xgboost as xgb
 # import lightgbm as lgb
@@ -37,13 +39,20 @@ class Regressor:
     regressorsMap = {
     "LinearRegression":LinearRegression(),
     "DecisionTreeRegressor":DecisionTreeRegressor(),
-    "Lasso":Lasso(alpha =0.0005, random_state=1),
-    "ElasticNet":ElasticNet(alpha=0.0005, l1_ratio=.9, random_state=3),
+    "Lasso":Lasso(alpha =0.005),#alpha =0.0005, random_state=1),
+    "ElasticNet":ElasticNet(l1_ratio=.9),#alpha=0.0005, l1_ratio=.9, random_state=3),
     "KernelRidge":KernelRidge(alpha=0.6, kernel='polynomial', degree=2, coef0=2.5),
     "GradientBoostingRegressor":GradientBoostingRegressor(n_estimators=3000, learning_rate=0.05,
                                    max_depth=4, max_features='sqrt',
                                    min_samples_leaf=15, min_samples_split=10,
-                                   loss='huber', random_state =5)}
+                                   loss='huber', random_state =5),
+
+    "RandomForestRegressor":RandomForestRegressor(bootstrap=True, criterion='mse', max_depth=None,
+           max_features=8, max_leaf_nodes=None, min_impurity_decrease=0.0,
+           min_impurity_split=None, min_samples_leaf=1,
+           min_samples_split=2, min_weight_fraction_leaf=0.0,
+           n_estimators=30, n_jobs=None, oob_score=False, random_state=None,
+           verbose=0, warm_start=False)}
     # "XGBRegressor":xgb.XGBRegressor(colsample_bytree=0.4603, gamma=0.0468,
     #                          learning_rate=0.05, max_depth=3,
     #                          min_child_weight=1.7817, n_estimators=2200,
@@ -67,8 +76,11 @@ class Regressor:
         scoresMap = {}
 
         for name, cmodel in self.regressorsMap.items():
+            print(name +" is runing")
             pipe = Pipeline(steps=[('preprocessor', preprocessor), ('classifier', cmodel)])
             pipe.fit(self.X_train, self.y_train)
+            # y_pred = pipe.predict(self.X_test)
+            # score = mean_absolute_error(self.y_test, y_pred)
             score = pipe.score(self.X_test, self.y_test)
             classifierArgs = str(cmodel.get_params())
             scoresMap.update({name: score})
@@ -93,9 +105,11 @@ class Regressor:
             models_args_list.append(self.argsMap[modelName])
 
         highest_scored_model = self.getHighestScoreModel(sorted_scores_map)
+        # eli5.show_weights(highest_scored_model, top=50)
+        # top_features = [i[1:] for i in eli5.formatters.as_dataframe.explain_weights_df(highest_scored_model).feature if 'BIAS' not in i]
         highest_scored_model_name = list(sorted_scores_map.keys())[0]
 
-        cross_val_score_mean = self.getCrossValScore(preprocessor, highest_scored_model)
+        cross_val_score_mean = 0#self.getCrossValScore(preprocessor, highest_scored_model)
 
         predicted_target_series = self.predictTarget(
             test_data, preprocessor, highest_scored_model)
@@ -129,9 +143,9 @@ class Regressor:
 
     def getCrossValScore(self, preprocessor, model):
         pipe = Pipeline(steps=[('preprocessor', preprocessor), ('classifier', model)])
-        cv_scores = cross_val_score(pipe, self.X_raw, self.y_raw,scoring='neg_mean_squared_error', cv=10)
-        mean_cv_score = np.sqrt(-cv_scores).mean()
-        return cv_scores
+        cv_scores = cross_val_score(pipe, self.X_raw, self.y_raw,scoring='r2', cv=10)
+        mean_cv_score = cv_scores.mean()
+        return mean_cv_score
 
     def getHighestScoreModel(self, sorted_map):
         modelsList = list(sorted_map.keys())
