@@ -29,13 +29,13 @@
     <div class="container-fluid">
       <div class="row justify-content-md-center">
 
-        <form action="/load_nimbus" method="POST" role="form" enctype="multipart/form-data">
+        <form action="/load_nimbus" method="POST" role="form" enctype="multipart/form-data" class="needs-validation" novalidate>
           <div class="form-row">
             <div class="form-group col-md-3">
               <input type="text" class="form-control" name="name" placeholder="Your Name">
             </div>
             <div class="form-group col-md-3">
-              <input type="text" class="form-control" name="project_name" placeholder="Project Name">
+              <input type="text" class="form-control" name="project_name" placeholder="Project Name" required>
             </div>
             <div class="form-group col-md-6">
               <input type="email" class="form-control" name="email" placeholder="Email Address">
@@ -45,15 +45,15 @@
           <div class="form-row">
             <div class="form-group col-md-6">
               <div class="custom-file">
-                <input type="file" class="custom-file-input" name="file">
+                <input type="file" class="custom-file-input" name="file" required>
                 <label class="custom-file-label" for="inputGroupFile01">Choose file</label>
               </div>
             </div>
             <div class="form-group col-md-3">
-              <input type="text" class="form-control" name="target_feature" placeholder="Target Feature Name">
+              <input type="text" class="form-control" name="target_feature" placeholder="Target Feature Name" required>
             </div>
             <div class="form-group col-md-3">
-              <select name="inputState" class="form-control">
+              <select name="inputState" class="form-control" required>
                 <option selected>Classification</option>
                 <option>Regression</option>
               </select>
@@ -105,9 +105,6 @@
             </div>
           </div>
 
-
-
-
           <center>
             <button type="submit" class="btn btn-success">Run Nimbus</button>
           </center>
@@ -132,7 +129,26 @@
   })
 </script> -->
 
-
+<script>
+  // Example starter JavaScript for disabling form submissions if there are invalid fields
+  (function() {
+    'use strict';
+    window.addEventListener('load', function() {
+      // Fetch all the forms we want to apply custom Bootstrap validation styles to
+      var forms = document.getElementsByClassName('needs-validation');
+      // Loop over them and prevent submission
+      var validation = Array.prototype.filter.call(forms, function(form) {
+        form.addEventListener('submit', function(event) {
+          if (form.checkValidity() === false) {
+            event.preventDefault();
+            event.stopPropagation();
+          }
+          form.classList.add('was-validated');
+        }, false);
+      });
+    }, false);
+  })();
+</script>
 
 
 
