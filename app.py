@@ -1,12 +1,9 @@
-from flask import Flask, render_template
-from flask import Flask, render_template, flash, request, url_for
-from wtforms import Form, TextField, TextAreaField, validators, StringField, SubmitField
-from models import classification_models
+from flask import Flask, render_template,request
 from models import baseClassifier
 import pandas as pd
 import os
 from werkzeug.utils import secure_filename
-from flask import send_file, send_from_directory
+from flask import send_from_directory
 
 
 UPLOAD_FOLDER = 'inputFiles'
@@ -15,7 +12,7 @@ DOWNLOAD_FOLDER = 'outputFiles'
 
 app = Flask(__name__)
 app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
-app.config['DOWNLOAD_FOLDER'] = DOWNLOAD_FOLDER
+app.config['DOWNLOAD_FOLDER'] = 'outputFiles'
 
 
 @app.route('/')
@@ -46,9 +43,9 @@ def show_nimbus():
 @app.route('/load_nimbus', methods=['POST'])
 def load_nimbus():
     # form =request.form
-    name = request.form.get('name')
+    request.form.get('name')
     pname = request.form.get('project_name')
-    email = request.form.get('email')
+    request.form.get('email')
     file = request.files['file']
     filename = secure_filename(file.filename)
     file.save(os.path.join(app.config['UPLOAD_FOLDER'], filename))
@@ -86,7 +83,7 @@ def load_nimbus():
             'nimbus_output.html',
             sorted_scores_map=sorted_scores_map,
             runDetails=runDetails,
-            pname=pname,acc_metrics=acc_metrics)
+            pname=pname, acc_metrics=acc_metrics)
 
     elif test_file_flag == "yes" and target_feature in data.columns:
         test_file = request.files['test_file']
@@ -103,25 +100,7 @@ def load_nimbus():
 
         runDetails, sorted_scores_map, models_args_list, generatedFileName, cross_val_score_mean, highestScoredModelName = classifier.trainWithTestFile(
             data, test_file_df, target_feature, target_features_to_include, pname, features_to_exclude_list, model_type)
-        # global outputFileName
-        # print(runDetails)
-        # print("===========================")
-        # print(sorted_scores_map.keys())
-        # print("===========================")
 
-        # print(models_args_list)
-        # print(generatedFileName)
-        # print(cross_val_score_mean)
-        # print(highestScoredModelName)
-
-
-
-
-        # global outputFilePath
-        # outputFilePath = os.path.join(
-        #     app.config['DOWNLOAD_FOLDER'],
-        #     generatedFileName)
-        # outputFileName = generatedFileName
         os.remove(file_url)
         os.remove(test_file_url)
         del classifier
@@ -133,7 +112,7 @@ def load_nimbus():
             pname=pname,
             cross_val_score_mean=cross_val_score_mean,
             highestScoredModelName=highestScoredModelName,
-            generatedFileName=generatedFileName,acc_metrics=acc_metrics)
+            generatedFileName=generatedFileName, acc_metrics=acc_metrics)
 
     else:
         os.remove(file_url)
@@ -155,9 +134,10 @@ def download_csv(filename):
         filename,
         as_attachment=True,
         cache_timeout=0)
-    os.remove(os.path.join(app.config['DOWNLOAD_FOLDER'], filename))
+    os.remove(os.path.join('outputFiles', filename))
     return response
 
 
 if __name__ == "__main__":
-    app.run(debug=True)
+    # app.run(debug=True)
+    app.run()

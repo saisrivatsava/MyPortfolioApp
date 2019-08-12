@@ -1,34 +1,21 @@
-import numpy as np
+import collections
+
+
 import pandas as pd
-from sklearn.model_selection import train_test_split
 from sklearn.model_selection import cross_val_score
 from sklearn.pipeline import Pipeline
-from sklearn.impute import SimpleImputer
-from sklearn.preprocessing import StandardScaler, OneHotEncoder
-from sklearn.compose import ColumnTransformer
-from sklearn.metrics import accuracy_score, log_loss
 from sklearn.neighbors import KNeighborsClassifier
-from sklearn.svm import SVC, LinearSVC, NuSVC
+from sklearn.svm import SVC
 from sklearn.tree import DecisionTreeClassifier
 from sklearn.ensemble import RandomForestClassifier, AdaBoostClassifier, GradientBoostingClassifier
-from sklearn.discriminant_analysis import LinearDiscriminantAnalysis
-from sklearn.discriminant_analysis import QuadraticDiscriminantAnalysis
 from sklearn.ensemble.bagging import BaggingClassifier
 from sklearn.linear_model.stochastic_gradient import SGDClassifier
 from sklearn.linear_model.ridge import RidgeClassifier
 from models import GenericCode
-import collections
 
 
 class Classifier:
-    X_train = ""
-    X_test = ""
-    y_train = ""
-    y_test = ""
-    raw_data = ""
-    X_raw = ""
-    y_raw = ""
-    genericCode = ""
+
 
     def __init__(self):
         self.genericCode = GenericCode.GenericCode()
@@ -129,9 +116,9 @@ class Classifier:
                 steps=[
                     ('preprocessor', preprocessor), ('classifier', cmodel)])
             pipe.fit(self.X_train, self.y_train)
-            # score = pipe.score(self.X_test, self.y_test)
-            score_arr = cross_val_score(pipe, self.X_raw, self.y_raw, cv=10)
-            score = score_arr.mean()
+            score = pipe.score(self.X_test, self.y_test)
+            # score_arr = cross_val_score(pipe, self.X_raw, self.y_raw, cv=10)
+            # score = score_arr.mean()
             classifierArgs = str(cmodel.get_params())
             scoresMap.update({name: score})
             self.argsMap.update({name: classifierArgs})

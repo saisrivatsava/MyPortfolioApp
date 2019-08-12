@@ -1,37 +1,19 @@
-from sklearn.linear_model import ElasticNet, Lasso, BayesianRidge, LassoLarsIC,LinearRegression,LogisticRegression
+from sklearn.linear_model import ElasticNet, Lasso, LinearRegression
 from sklearn.tree import DecisionTreeRegressor
 from sklearn.ensemble import RandomForestRegressor, GradientBoostingRegressor
 from sklearn.kernel_ridge import KernelRidge
-from sklearn.pipeline import make_pipeline
-from sklearn.preprocessing import RobustScaler
-from sklearn.base import BaseEstimator, TransformerMixin, RegressorMixin, clone
-from sklearn.model_selection import KFold, cross_val_score, train_test_split
-from sklearn.metrics import mean_squared_error
+from sklearn.model_selection import  cross_val_score
 from models import GenericCode
 from sklearn.pipeline import Pipeline
-from sklearn.impute import SimpleImputer
-from sklearn.preprocessing import StandardScaler, OneHotEncoder
-from sklearn.compose import ColumnTransformer
-from sklearn.metrics import accuracy_score, log_loss
-from sklearn.metrics import mean_absolute_error
 import collections
 import pandas as pd
-import numpy as np
-import eli5
 
 # import xgboost as xgb
 # import lightgbm as lgb
 
 
 class Regressor:
-    X_train = ""
-    X_test = ""
-    y_train = ""
-    y_test = ""
-    raw_data = ""
-    X_raw = ""
-    y_raw = ""
-    genericCode = ""
+
 
     def __init__(self):
         self.genericCode = GenericCode.GenericCode()
@@ -76,7 +58,6 @@ class Regressor:
         scoresMap = {}
 
         for name, cmodel in self.regressorsMap.items():
-            print(name +" is runing")
             pipe = Pipeline(steps=[('preprocessor', preprocessor), ('classifier', cmodel)])
             pipe.fit(self.X_train, self.y_train)
             # y_pred = pipe.predict(self.X_test)
@@ -105,11 +86,10 @@ class Regressor:
             models_args_list.append(self.argsMap[modelName])
 
         highest_scored_model = self.getHighestScoreModel(sorted_scores_map)
-        # eli5.show_weights(highest_scored_model, top=50)
-        # top_features = [i[1:] for i in eli5.formatters.as_dataframe.explain_weights_df(highest_scored_model).feature if 'BIAS' not in i]
+ 
         highest_scored_model_name = list(sorted_scores_map.keys())[0]
 
-        cross_val_score_mean = 0#self.getCrossValScore(preprocessor, highest_scored_model)
+        cross_val_score_mean = self.getCrossValScore(preprocessor, highest_scored_model)
 
         predicted_target_series = self.predictTarget(
             test_data, preprocessor, highest_scored_model)
